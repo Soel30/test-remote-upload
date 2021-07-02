@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--ShanaEncoder-->
+<Settings>
+  <inputparamBox />
+  <prefixtextBox />
+  <extensiontextBox />
+  <filterparamBoxV> -vf "scale=640:360:flags=bicubic,setsar=1/1,shanasubtitle=1"</filterparamBoxV>
+  <filterparamBoxA> -af "aresample=44100:resampler=soxr"</filterparamBoxA>
+  <encparamBox> -f mp4
+ -c:v libx264 -profile:v main -level auto -preset veryfast -tune:v none -crf 23.0 -r 29.97
+ -c:a libfdk_aac -ac 2 -b:a 32k
+ -sn -map_metadata -1 -map_chapters -1 -fdkprofile he</encparamBox>
+  <x264optsBox />
+  <substyle>Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,,24,&amp;H00FFFFFF,&amp;H0000FFFF,&amp;H00000000,&amp;H80000000,-1,0,0,0,100,100,0,0,1,2.0,1,2,10,10,20,1</substyle>
+  <fontnameSE />
+  <Logo>
+    <logochk>True</logochk>
+    <logopath>C:\Users\Administrator\Downloads\Encode\drakor.png</logopath>
+    <logoalign>1</logoalign>
+    <logox>5</logox>
+    <logoy>0</logoy>
+    <logow>120</logow>
+    <logoh>50</logoh>
+    <logos>1</logos>
+    <logosd>1</logosd>
+    <logoe>300.00</logoe>
+    <logoed>1</logoed>
+    <logoschk>True</logoschk>
+    <logoechk>True</logoechk>
+  </Logo>
+</Settings>
