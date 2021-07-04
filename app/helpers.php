@@ -29,7 +29,7 @@ function zipiDirect($url)
     $res =  "https://" . $baseUrl . "/d/" . $param[1] . "/" . $tiga . $param3[1];
     $data = [];
     $data['url'] = $res;
-    $data['title'] = $html->findOne('title')->text();
+    $data['title'] = explode(' - ', $html->findOne('title')->text())[1];
     return $data;
 }
 
@@ -38,7 +38,7 @@ function mediaDirect($url)
     $html = curlSetup($url);
     $data = [];
     $url = $html->findOne('#downloadButton')->getAttribute('href');
-    $title = $html->findOne('body > div.mf-dlr.page.ads-alternate > div.content > div.center > div > div.dl-info > div.intro.icon.xml.development.text_xml > div.filename')->text();
+    $title = $html->findOne('body > div.mf-dlr.page.ads-alternate > div.content > div.center > div > div.dl-info > div > div.filename')->text();
 
     $data['url'] = $url;
     $data['title'] = $title;
@@ -49,8 +49,16 @@ function driveDownload($url)
 {
     $html = curlSetup($url);
     $data = [];
-    $data['title'] = str_replace(' - Google Drive', "", $html->findOne('title')->text());
-    $newUrl = str_replace("/view", "", explode("d/", $url)[1]);
+    $newpath =  parse_url($url);
+
+    if (strpos($newpath['path'], '/uc')) {
+        $newUrl = str_replace("&export", '', explode('=', $newpath['query'])[1]);
+        $data['title'] = $html->findOne('#uc-text > p.uc-warning-subcaption > span > a')->text();
+    } else {
+        $newUrl = (explode('/', parse_url($url)['path'])[3]);
+        $data['title'] = str_replace(' - Google Drive', "", $html->findOne('title')->text());
+    }
+
     if (isset($newUrl)) {
         $id = $newUrl;
         $__url = filter_var(strip_tags($id), FILTER_SANITIZE_STRING);

@@ -35,31 +35,53 @@ class UploadController extends Controller
      */
     public function store(Request $request)
     {
-        $data = explode(',', $request->link);
+        $data = explode('https://', str_replace("\r\n", "", $request->link));
         foreach ($data as $link) {
-            $new = explode(".", $link)[1];
-            $newlink = str_replace("\r\n", "", $link);
-            switch ($new) {
-                case "zippyshare":
-                    $media = zipiDirect($newlink);
-                    $dl = file_get_contents($media['url']);
-                    Storage::disk('local')->put($media['title'], $dl);
-                    echo 'upload zippyshare selesai';
-                    break;
-                case "mediafire":
-                    $media = mediaDirect($newlink);
-                    $dl = file_get_contents($media['url']);
-                    Storage::disk('local')->put($media['title'], $dl);
-                    echo 'upload mediafire selesai';
-                    break;
-                case "google":
-                    $media = driveDownload($newlink);
-                    $dl = file_get_contents($media['url']);
-                    Storage::disk('local')->put($media['title'], $dl);
-                    echo 'upload drive selesai';
-                    break;
-                default:
-                    break;
+            if ($link) {
+                $new = explode(".", $link)[1];
+                $newlink = "https://" . $link;
+                switch ($new) {
+                    case "zippyshare":
+                        $media = zipiDirect($newlink);
+                        $dl = file_get_contents($media['url']);
+                        Storage::disk('local')->put($media['title'], $dl);
+                        echo 'upload zippyshare selesai';
+                        break;
+                    case "mediafire":
+                        $media = mediaDirect($newlink);
+                        $path  = "../storage/app/" . $media['title'];
+                        $fp = fopen($path, "w+");
+                        $ch = curl_init($media['url']);
+                        curl_setopt($ch, CURLOPT_FILE, $fp);
+                        curl_exec($ch);
+                        $st_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                        curl_close($ch);
+                        fclose($fp);
+                        if ($st_code == 200)
+                            echo 'upload mediafire selesai';
+
+                        else
+                            echo 'Error downloading file!';
+                        break;
+                    case "google":
+                        $media = driveDownload($newlink);
+                        $path  = "../storage/app/" . $media['title'];
+                        $fp = fopen($path, "w+");
+                        $ch = curl_init($media['url']);
+                        curl_setopt($ch, CURLOPT_FILE, $fp);
+                        curl_exec($ch);
+                        $st_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                        curl_close($ch);
+                        fclose($fp);
+                        if ($st_code == 200)
+                            echo 'upload drive selesai';
+
+                        else
+                            echo 'Error downloading file!';
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
