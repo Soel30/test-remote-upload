@@ -49,16 +49,22 @@ function driveDownload($url)
 {
     $html = curlSetup($url);
     $data = [];
-    $newpath =  parse_url($url);
+    $newUrl = null;
 
-    if (strpos($newpath['path'], '/uc')) {
-        $newUrl = str_replace("&export", '', explode('=', $newpath['query'])[1]);
+    if (strpos($url, '/uc')) {
         $data['title'] = $html->findOne('#uc-text > p.uc-warning-subcaption > span > a')->text();
+        preg_match("/uc\?id=(.*?)&/si", $url, $link);
+        if ($link) {
+            $newUrl = $link[1];
+            // echo $link[1];
+        } else {
+            preg_match("/export=download&id=(.*?)$/si", $url, $link2);
+            $newUrl =  $link2[1];
+        }
     } else {
         $newUrl = (explode('/', parse_url($url)['path'])[3]);
         $data['title'] = str_replace(' - Google Drive', "", $html->findOne('title')->text());
     }
-
     if (isset($newUrl)) {
         $id = $newUrl;
         $__url = filter_var(strip_tags($id), FILTER_SANITIZE_STRING);
